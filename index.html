@@ -1,1 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>인테리어 견적 계산기</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f8f9fa;
+      padding: 2rem;
+      display: flex;
+      justify-content: center;
+    }
+    .container {
+      background-color: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 600px;
+    }
+    h1 { text-align: center; }
+    .section { margin-bottom: 2rem; }
+    label { display: block; margin-top: 1rem; font-weight: bold; }
+    input[type="number"] {
+      width: 100%; padding: 0.5rem; margin-top: 0.3rem;
+      border-radius: 5px; border: 1px solid #ccc;
+    }
+    select {
+      width: 100%; padding: 0.5rem; margin-top: 0.3rem;
+      border-radius: 5px; border: 1px solid #ccc;
+    }
+    button {
+      width: 100%; padding: 1rem; background: #4CAF50;
+      color: white; border: none; font-size: 1rem;
+      border-radius: 5px; margin-top: 2rem; cursor: pointer;
+    }
+    .result {
+      background: #e8f5e9;
+      padding: 1rem; border-left: 5px solid #4CAF50;
+      margin-top: 2rem; font-size: 1.2rem;
+    }
+    .error {
+      color: red; font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>인테리어 견적 계산기</h1>
 
+    <div class="section">
+      <label for="work">공정 선택</label>
+      <select id="work">
+        <option value="도배-실크벽지">도배 - 실크벽지</option>
+        <option value="도배-합지벽지">도배 - 합지벽지</option>
+        <option value="바닥재-장판">바닥재 - 장판</option>
+        <option value="바닥재-강화마루">바닥재 - 강화마루</option>
+        <option value="조명-LED등">조명 - LED등</option>
+        <option value="조명-센서등">조명 - 센서등</option>
+        <option value="샷시-PVC창호">샷시 - PVC창호</option>
+        <option value="샷시-알루미늄창호">샷시 - 알루미늄창호</option>
+      </select>
+
+      <label for="amount">수량 (㎡ 또는 개수)</label>
+      <input type="number" id="amount" placeholder="예: 15">
+
+      <button onclick="addItem()">항목 추가</button>
+    </div>
+
+    <div id="estimateList" class="section"></div>
+
+    <div class="result" id="totalBox">
+      총 견적: <span id="total">0</span> 원
+    </div>
+
+    <div class="error" id="errorMsg"></div>
+  </div>
+
+  <script>
+    const unitPrices = {
+      "도배-실크벽지": null,
+      "도배-합지벽지": null,
+      "바닥재-장판": null,
+      "바닥재-강화마루": null,
+      "조명-LED등": null,
+      "조명-센서등": null,
+      "샷시-PVC창호": null,
+      "샷시-알루미늄창호": null
+    };
+
+    let total = 0;
+
+    function addItem() {
+      const work = document.getElementById("work").value;
+      const amount = parseFloat(document.getElementById("amount").value);
+      const price = unitPrices[work];
+
+      const errorBox = document.getElementById("errorMsg");
+      errorBox.innerText = "";
+
+      if (isNaN(amount) || amount <= 0) {
+        errorBox.innerText = "수량을 올바르게 입력해주세요.";
+        return;
+      }
+
+      if (price === null) {
+        errorBox.innerText = `⚠️ [${work}] 항목의 단가가 아직 입력되지 않았습니다.`;
+        return;
+      }
+
+      const cost = price * amount;
+      total += cost;
+
+      const list = document.getElementById("estimateList");
+      const item = document.createElement("div");
+      item.innerText = `${work} × ${amount} = ${cost.toLocaleString()}원`;
+      list.appendChild(item);
+
+      document.getElementById("total").innerText = total.toLocaleString();
+    }
+  </script>
+</body>
+</html>
